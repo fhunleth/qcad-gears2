@@ -47,23 +47,23 @@
 
 include("scripts/library.js");
 
-function InvoluteSpur() {
+function InvoluteSpur2() {
 }
 
 /*
  * Fixed (for now) parameters
  */
-InvoluteSpur.spokeRatio = 1.0;	// times axleDiameter
-InvoluteSpur.hubRatio = 1.5;	// times axleDiameter
-InvoluteSpur.rimRatio = 0.8;	// times rootRadius
+InvoluteSpur2.spokeRatio = 1.0;	// times axleDiameter
+InvoluteSpur2.hubRatio = 1.5;	// times axleDiameter
+InvoluteSpur2.rimRatio = 0.8;	// times rootRadius
 
 /* defaults */
-InvoluteSpur.pitchCircleDiameter = 100;
-InvoluteSpur.drawPitchCircle = false;
-InvoluteSpur.numberOfTeeth = 12;
-InvoluteSpur.pressureAngle = 20;
-InvoluteSpur.numberOfSpokes = 0;
-InvoluteSpur.axleDiameter = 6;
+InvoluteSpur2.module = 3;
+InvoluteSpur2.drawPitchCircle = false;
+InvoluteSpur2.numberOfTeeth = 10;
+InvoluteSpur2.pressureAngle = 20;
+InvoluteSpur2.numberOfSpokes = 0;
+InvoluteSpur2.axleDiameter = 3.4;
 
 /*
  * The function init() is called whenever the preview icon is generated or when the script
@@ -71,38 +71,38 @@ InvoluteSpur.axleDiameter = 6;
  * - formWidget is the widget that displays the script item's parameters (if applicable).
  */
 
-InvoluteSpur.init = function(formWidget) {
+InvoluteSpur2.init = function(formWidget) {
 	if (!isNull(formWidget)) {
-		InvoluteSpur.widgets = getWidgets(formWidget);
+		InvoluteSpur2.widgets = getWidgets(formWidget);
 
 		var dv = new QDoubleValidator();
 		dv.notation = "StandardNotation";
 
-		var PCD = InvoluteSpur.widgets["PitchCircleDiameter"];	/* QLineEdit */
-		PCD.setValidator(dv);
-		PCD.text = InvoluteSpur.pitchCircleDiameter;
+		var MOD = InvoluteSpur2.widgets["Module"];	/* QLineEdit */
+		MOD.setValidator(dv);
+		MOD.text = InvoluteSpur2.module;
 
-		var N = InvoluteSpur.widgets["NumberOfTeeth"];		/* QSpinBox */
-		N.value = InvoluteSpur.numberOfTeeth;
+		var N = InvoluteSpur2.widgets["NumberOfTeeth"];		/* QSpinBox */
+		N.value = InvoluteSpur2.numberOfTeeth;
 
-		var MOD = InvoluteSpur.widgets["Module"];		/* QLabel */
-		MOD.text = InvoluteSpur.pitchCircleDiameter / InvoluteSpur.numberOfTeeth;
+		var PCD = InvoluteSpur2.widgets["PitchCircleDiameter"];		/* QLabel */
+		PCD.text = InvoluteSpur2.module * InvoluteSpur2.numberOfTeeth;
 
-		PCD.textChanged.connect(function(value) {
-			MOD.text = value / InvoluteSpur.numberOfTeeth;
+		MOD.textChanged.connect(function(value) {
+			PCD.text = value * InvoluteSpur2.numberOfTeeth;
 		});
 
 		N['valueChanged(int)'].connect(function(value) {
-			MOD.text = InvoluteSpur.pitchCircleDiameter / value;
+			PCD.text = InvoluteSpur2.module * value;
 		});
 
-		var PA = InvoluteSpur.widgets["PressureAngle"];		/* QLineEdit */
+		var PA = InvoluteSpur2.widgets["PressureAngle"];		/* QLineEdit */
 		PA.setValidator(dv);
-		PA.text = InvoluteSpur.pressureAngle;
+		PA.text = InvoluteSpur2.pressureAngle;
 
-		var AD = InvoluteSpur.widgets["AxleDiameter"];		/* QLineEdit */
+		var AD = InvoluteSpur2.widgets["AxleDiameter"];		/* QLineEdit */
 		AD.setValidator(dv);
-		AD.text = InvoluteSpur.axleDiameter;
+		AD.text = InvoluteSpur2.axleDiameter;
 	}
 };
 
@@ -115,35 +115,35 @@ InvoluteSpur.init = function(formWidget) {
  * This function is expected to return an object of type RAddObjectsOperation.
  */
 
-InvoluteSpur.generate = function(documentInterface, file) {
+InvoluteSpur2.generate = function(documentInterface, file) {
 	/* QLineEdit */
-	var v = parseFloat(InvoluteSpur.widgets["PitchCircleDiameter"].text);
+	var v = parseFloat(InvoluteSpur2.widgets["Module"].text);
 	if (!isNaN(v)) {
-		InvoluteSpur.pitchCircleDiameter = v;
+		InvoluteSpur2.module = v;
 	}
 
 	/* QLineEdit */
-	var v = parseFloat(InvoluteSpur.widgets["PressureAngle"].text);
+    v = parseFloat(InvoluteSpur2.widgets["PressureAngle"].text);
 	if (!isNaN(v)) {
-		InvoluteSpur.pressureAngle = v;
+		InvoluteSpur2.pressureAngle = v;
 	}
 
 	/* QLineEdit */
-	var v = parseFloat(InvoluteSpur.widgets["AxleDiameter"].text);
+    v = parseFloat(InvoluteSpur2.widgets["AxleDiameter"].text);
 	if (!isNaN(v)) {
-		InvoluteSpur.axleDiameter = v;
+		InvoluteSpur2.axleDiameter = v;
 	}
 
 	/* QCheckBox */
-	InvoluteSpur.drawPitchCircle = InvoluteSpur.widgets["DrawPitchCircle"].checked;
+	InvoluteSpur2.drawPitchCircle = InvoluteSpur2.widgets["DrawPitchCircle"].checked;
 
 	/* QSpinBox */
-	InvoluteSpur.numberOfTeeth = InvoluteSpur.widgets["NumberOfTeeth"].value;
+	InvoluteSpur2.numberOfTeeth = InvoluteSpur2.widgets["NumberOfTeeth"].value;
 
 	/* QSpinBox */
-	InvoluteSpur.numberOfSpokes = InvoluteSpur.widgets["NumberOfSpokes"].value;
+	InvoluteSpur2.numberOfSpokes = InvoluteSpur2.widgets["NumberOfSpokes"].value;
 
-	return InvoluteSpur.createGear(documentInterface.getDocument());
+	return InvoluteSpur2.createGear(documentInterface.getDocument());
 };
 
 /*
@@ -156,15 +156,15 @@ InvoluteSpur.generate = function(documentInterface, file) {
  * This function is expected to return an object of type RAddObjectsOperation.
  */
 
-InvoluteSpur.generatePreview = function(documentInterface, iconSize) {
-	InvoluteSpur.pitchCircleDiameter = iconSize / 2;
-	InvoluteSpur.drawPitchCircle = false;
-	InvoluteSpur.pressureAngle = 20;
-	InvoluteSpur.numberOfTeeth = 12;
-	InvoluteSpur.numberOfSpokes = 0;
-	InvoluteSpur.axleDiameter = iconSize / 15
+InvoluteSpur2.generatePreview = function(documentInterface, iconSize) {
+	InvoluteSpur2.module = iconSize / 2 / 12;
+	InvoluteSpur2.drawPitchCircle = false;
+	InvoluteSpur2.pressureAngle = 20;
+	InvoluteSpur2.numberOfTeeth = 12;
+	InvoluteSpur2.numberOfSpokes = 0;
+	InvoluteSpur2.axleDiameter = iconSize / 15
 
-	return InvoluteSpur.createGear(documentInterface.getDocument());
+	return InvoluteSpur2.createGear(documentInterface.getDocument());
 };
 
 /*
@@ -179,18 +179,19 @@ function involuteAngle(radius, base) {
 /*
  * Internal function to create a gear
  */
-InvoluteSpur.createGear = function(document) {
+InvoluteSpur2.createGear = function(document) {
 	var addOperation = new RAddObjectsOperation(false);
 
 	const centre = new RVector();
-	const module = InvoluteSpur.pitchCircleDiameter / InvoluteSpur.numberOfTeeth;
-	const pitchRadius = InvoluteSpur.pitchCircleDiameter / 2;
-	const baseRadius = pitchRadius * Math.cos(deg2rad(InvoluteSpur.pressureAngle));
+	const module = InvoluteSpur2.module;
+	const pitchDiameter = module * InvoluteSpur2.numberOfTeeth;
+	const pitchRadius = pitchDiameter / 2;
+	const baseRadius = pitchRadius * Math.cos(deg2rad(InvoluteSpur2.pressureAngle));
 	const outsideRadius = pitchRadius + module;
 	const rootRadius = outsideRadius - module * 2.25;
 
 	/* draw pitch circle */
-	if (InvoluteSpur.drawPitchCircle) {
+	if (InvoluteSpur2.drawPitchCircle) {
 		var cd = new RCircleData(centre, pitchRadius);
 		addOperation.addObject(new RCircleEntity(document, cd));
 	}
@@ -216,18 +217,18 @@ InvoluteSpur.createGear = function(document) {
 	 * The Involute Curve part to outsideRadius, ensuring that we place a
 	 * vertex on the pitch circle.
 	 */
-	const step = (pitchRadius - radius) / 4;
+    const step1 = (pitchRadius - radius) / 4;
 	for (var n = 0; n < 4; n++) {
 		const angle = involuteAngle(radius, baseRadius);
 		td.push([radius, angle, 0]);
-		radius += step;
+        radius += step1;
 	}
 
-	const step = (outsideRadius - radius) / 5;
+    const step2 = (outsideRadius - radius) / 5;
 	for (var n = 0; n < 5; n++) {
 		const angle = involuteAngle(radius, baseRadius);
 		td.push([radius, angle, 0]);
-		radius += step;
+        radius += step2;
 	}
 
 	/*
@@ -235,7 +236,7 @@ InvoluteSpur.createGear = function(document) {
 	 * pitch circle
 	 */
 	const pitchAngle = involuteAngle(pitchRadius, baseRadius);
-	const toothAngle = 2 * Math.PI / InvoluteSpur.numberOfTeeth;
+	const toothAngle = 2 * Math.PI / InvoluteSpur2.numberOfTeeth;
 
 	/*
 	 * the vertex at outsideRadius is separate as we need to set the bulge
@@ -262,7 +263,7 @@ InvoluteSpur.createGear = function(document) {
 	 */
 	gear = new RPolyline();
 	gear.setClosed(true);
-	for (var i = 0; i < InvoluteSpur.numberOfTeeth; i++) {
+	for (var i = 0; i < InvoluteSpur2.numberOfTeeth; i++) {
 		for (var n = 0; n < td.length; n++) {
 			gear.appendVertex(RVector.createPolar(td[n][0], (i * toothAngle) + td[n][1]), td[n][2]);
 		}
@@ -271,27 +272,27 @@ InvoluteSpur.createGear = function(document) {
 	addOperation.addObject(new RPolylineEntity(document, new RPolylineData(gear)));
 
 	/* make axle hole, if required */
-	if (InvoluteSpur.axleDiameter > 0) {
-		var radius = Math.min(InvoluteSpur.axleDiameter / 2, pitchRadius - 2 * module);
+	if (InvoluteSpur2.axleDiameter > 0) {
+		var radius = Math.min(InvoluteSpur2.axleDiameter / 2, pitchRadius - 2 * module);
 		addOperation.addObject(new RCircleEntity(document, new RCircleData(centre, radius)));
 	}
 
 	/* make spokes, if required and is possible */
-	if (InvoluteSpur.numberOfSpokes > 0 && InvoluteSpur.axleDiameter > 0) {
-		const spokeAngle = 2 * Math.PI / InvoluteSpur.numberOfSpokes;
+	if (InvoluteSpur2.numberOfSpokes > 0 && InvoluteSpur2.axleDiameter > 0) {
+		const spokeAngle = 2 * Math.PI / InvoluteSpur2.numberOfSpokes;
 
-		var r0 = InvoluteSpur.hubRatio * InvoluteSpur.axleDiameter;
-		var a0 = Math.asin((InvoluteSpur.spokeRatio * InvoluteSpur.axleDiameter) / (r0 * 2));
+		var r0 = InvoluteSpur2.hubRatio * InvoluteSpur2.axleDiameter;
+		var a0 = Math.asin((InvoluteSpur2.spokeRatio * InvoluteSpur2.axleDiameter) / (r0 * 2));
 
-		var r1 = InvoluteSpur.rimRatio * rootRadius;
-		var a1 = Math.asin((InvoluteSpur.spokeRatio * InvoluteSpur.axleDiameter) / (r1 * 2));
+		var r1 = InvoluteSpur2.rimRatio * rootRadius;
+		var a1 = Math.asin((InvoluteSpur2.spokeRatio * InvoluteSpur2.axleDiameter) / (r1 * 2));
 
 		var hole = new RPolyline();
 		hole.setClosed(true);
 
 		if (a0 > spokeAngle / 2) {
 			a0 = spokeAngle / 2;
-			r0 = (InvoluteSpur.spokeRatio * InvoluteSpur.axleDiameter) / (Math.sin(a0) * 2);
+			r0 = (InvoluteSpur2.spokeRatio * InvoluteSpur2.axleDiameter) / (Math.sin(a0) * 2);
 		} else {
 			hole.appendVertex(RVector.createPolar(r0, spokeAngle - a0), Math.tan((2 * a0 - spokeAngle) / 4));
 		}
@@ -301,7 +302,7 @@ InvoluteSpur.createGear = function(document) {
 		hole.appendVertex(RVector.createPolar(r1, spokeAngle - a1));
 
 		if (r0 < r1) {
-			for (var n = 0; n < InvoluteSpur.numberOfSpokes; n++) {
+			for (var n = 0; n < InvoluteSpur2.numberOfSpokes; n++) {
 				addOperation.addObject(new RPolylineEntity(document, new RPolylineData(hole)));
 				hole.rotate(spokeAngle, centre);
 			}
